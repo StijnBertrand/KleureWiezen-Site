@@ -12,20 +12,22 @@ public class KHumanPlayer extends HumanPlayer implements KPlayer{
 	private boolean myTurnToBed = false;
 	private boolean myTurnToDiscard = false;
 	
+	//checks if the player can play the card in his hand at position index
 	@Override
-	protected boolean canPlay(int card){
+	protected boolean canPlay(int index){
 		// hier moet nog iets komen voor als het troel is
 		int starter = table.getCurrSlag().getStarter();
 		if(-1 == starter)return true;
 		int colour = table.getCurrSlag().getCard(starter).getColour();	
 		if(hasCards(colour)){
-			if( colour != hand.getCard(card).getColour()){
+			if( colour != hand.getCard(index).getColour()){
 				return false;
 			}
 		}	
 		return true;
 	}
 	
+	//checks whether this player has troel
 	private int troel(){
 		int aces = 0;
 		boolean[] b = new boolean[9];
@@ -51,6 +53,7 @@ public class KHumanPlayer extends HumanPlayer implements KPlayer{
 		return 1;
 	}
 
+	//lets this player place a bed
 	@Override
 	public int letBid() {
 		try{
@@ -90,23 +93,31 @@ public class KHumanPlayer extends HumanPlayer implements KPlayer{
 		return ((KTable)table).getOptions( seat);		
 	}
 	
-	public void bed(int bed){
+	//this method makes a player place a bed
+	public boolean bed(int bed){
 		synchronized(lock){
 			if(myTurnToBed & canBed(bed)){
 				this.bed  = bed;
 				myTurnToBed = false;
 				lock.notify();
+				return true;
+			}
+			else{
+				return false;
 			}
 		}	
 	}
 
+	//checks if a player can place this bed
 	private boolean canBed(int bed) {
-		return true;
+		return getOptions()[bed];
 	}
 
 	public boolean getMyTurnToBed(){
 		return myTurnToBed;
 	}
+	
+	//returns if the bedding phase is still going on
 	public boolean isBidding() {
 		return ((KTable)table).getBidding();
 	}
@@ -119,6 +130,7 @@ public class KHumanPlayer extends HumanPlayer implements KPlayer{
 		return false;
 	}
 
+	//allows a player to discard a card
 	@Override
 	public Card letDiscard() {
 		try {
@@ -132,12 +144,15 @@ public class KHumanPlayer extends HumanPlayer implements KPlayer{
 		return hand.play(cardToPlay);
 	}
 	
-	public void discardCard(int index){
+	public boolean discardCard(int index){
 		synchronized(lock){
 			if(myTurnToDiscard & canPlay(index)){
 				cardToPlay = index;
 				myTurnToDiscard = false;
 				lock.notify();
+				return true;
+			}else{
+				return false;
 			}
 		}		
 	}

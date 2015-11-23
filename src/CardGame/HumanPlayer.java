@@ -6,12 +6,15 @@ public class HumanPlayer extends Player{
 	protected boolean myTurn = false;
 	protected int cardToPlay = -1;
 	
-	public void playCard(int index){
+	public boolean playCard(int index){
 		synchronized(lock){
 			if(myTurn & canPlay(index)){
 				cardToPlay = index;
 				myTurn = false;
 				lock.notify();
+				return true;
+			}else{
+				return false;
 			}
 		}		
 	}

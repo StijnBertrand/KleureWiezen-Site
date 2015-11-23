@@ -43,6 +43,7 @@ public class Servlet extends HttpServlet {
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer transformer = tf.newTransformer(stylesheet);
 			transformer.transform(input, output);
+			
 		}
 		catch (Exception e) {
 			out.write(e.getMessage());

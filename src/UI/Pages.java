@@ -32,10 +32,10 @@ public class Pages {
 	
 	private Page getPage(String page){
 		if (page != null && pages.containsKey(page)){
-			System.out.println("page found: " + page);
+			System.out.println("pages: page found: " + page);
 			return (Page) pages.get(page);
 		}else if(defaultPage != null && pages.containsKey(defaultPage)) {
-			System.out.println("page not found: " + page);
+			System.out.println("pages: page not found: " + page);
 			return (Page) pages.get(defaultPage);
 		}else{
 			return null;

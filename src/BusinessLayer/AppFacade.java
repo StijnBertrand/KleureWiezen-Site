@@ -1,82 +1,62 @@
 package BusinessLayer;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.ArrayList;
 
-import KleurenWiezen.Game;
-import KleurenWiezen.KleureWiezenFactory;
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 public class AppFacade {
-	KleureWiezenFactory kf = KleureWiezenFactory.getInstance();
-	Users users = new Users();
-	ArrayList<Game> games;
+	
+	ArrayList<User> users;
+	HashMap<UUID, Game> games;
 	
 	public AppFacade(){
-		games = new ArrayList<Game>();
+		games = new HashMap<UUID, Game>();
+		users = new ArrayList<User>();
 	}
 	
 	//add a new user
-	public Integer AddUser(String name) {
-		return users.AddPlayer(name);
+	public User AddUser(String name) {
+		User user = new User(name);
+		users.add(user);
+		return user;
 	}
 
 	//remove a user
-	public void removeUser(Integer loginid) {
-		users.removePlayer(loginid);
+	public void removeUser(User user) {
+		users.remove(user);
 	}
 	
 	//add a new game
-	public void addGame(){
-		//check if the owner has a game already
-		games.add(kf.getGame());
-		// add the owner to the game
+	public Game addGame(){
+		Game game = new Game();
+		games.put(game.getId(),game);
+		return game;
+	}
+	
+	public Game getGame(UUID id){
+		return games.get(id);
 	}
 	
 	//remove a game
-	public void removeGame(int index){
-		//check is the game has not yet started
-		//let all players know that the game has been canceled
-		//remove the game
-		games.remove(index);
+	public synchronized boolean removeGame(UUID id){
+		if(games.get(id).empty()){
+			games.remove(id);
+			return true;
+		}
+		return false;
 	}
 	
-	//start a game
-	public void startGame(){
-		//check if there are enough players
-		//can only be done by the owner
+	public User getAIUser() {
+		return new AIUser();
 	}
-	
-	//add a player to a game
-	public void addPlayer(){
-		//check if the player has joined a game already
-		// check if the player is not null
-		
-	}
-	
-	//remove a player from a game
-	public void removePlayer(){
-		
-	}
-	
-	//let a player play a card
-	public void playCard(){
-		
-	}
-	
-	//let a player place a bed
-	public void placeBed(){
-		
-	}
-
-	
-	
-	
-	
-	
 	
 	public String getGamesXml(){
-		String XML = "<games>";
-		for(Game game: games){
-			XML = XML + "<game><name>"+ "kleurewiezen" +"</name></game>";
+		String XML = "<games>";    
+		for(Game game: games.values()){
+			XML += game.getGameXML();
 		}
 		XML += "</games>";
 		return XML;
@@ -84,7 +64,14 @@ public class AppFacade {
 
 
 	public String getUsersXml() {
-		return users.getUsersXml();
+		String XML = "<users>";
+		for(User user: users){
+			XML = XML + "<user><name>"+ user.getName() +"</name></user>";
+		}
+		XML += "</users>";
+		return XML;
 	}
+
+	
 
 }
