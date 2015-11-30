@@ -29,24 +29,23 @@ import java.io.FileInputStream;
 public class Servlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Properties	properties	= new Properties();
-	private Pages pages;
+	private Page page;
 
 	public void doGet(	HttpServletRequest	request,HttpServletResponse	response)throws ServletException, IOException {
 		System.out.println("Page =" + request.getParameter("Page"));	
 		response.setContentType("text/html; charset=ISO-8859-1");
 		PrintWriter out = response.getWriter();
 		try {
-			StreamSource input= new StreamSource(new StringReader(pages.doGet(request.getParameter("Page"),request,response)));
+			StreamSource input= new StreamSource(new StringReader(page.doGet(request,response)));
 			StreamSource stylesheet= new StreamSource(new URL("file", "",properties.getProperty("template")).openStream());
 			StreamResult output	= new StreamResult(out);
-			
+
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer transformer = tf.newTransformer(stylesheet);
-			transformer.transform(input, output);
-			
+			transformer.transform(input, output);	
 		}
 		catch (Exception e) {
-			out.write(e.getMessage());
+			//out.write(e.getMessage());
 			e.printStackTrace(out);
 		}
 	}
@@ -55,7 +54,7 @@ public class Servlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		PrintWriter out = response.getWriter();
 		try {
-			StreamSource input= new StreamSource(new StringReader(pages.doPost(request.getParameter("Page"),request,response)));
+			StreamSource input= new StreamSource(new StringReader(page.doPost(request,response)));
 			StreamSource stylesheet= new StreamSource(new URL("file", "",properties.getProperty("template")).openStream());
 			StreamResult output= new StreamResult(out);
 			TransformerFactory tf= TransformerFactory.newInstance();
@@ -63,7 +62,7 @@ public class Servlet extends HttpServlet {
 			transformer.transform(input, output);
 		}
 		catch (Exception e) {
-			out.write(e.getMessage());
+			//out.write(e.getMessage());
 			e.printStackTrace(out);
 		}
 	}
@@ -72,11 +71,11 @@ public class Servlet extends HttpServlet {
 		try {
 			String cfgfile = getInitParameter("config_file");
 			properties.load(new FileInputStream(cfgfile));
-			pages = new Pages(properties.getProperty("DefaultPage"));
-			
+			page = new Page(new AppFacade());			
 		}
 		catch (IOException e) {
 
-		}
+		}	
+		
 	}
 }

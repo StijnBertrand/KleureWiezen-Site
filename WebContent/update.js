@@ -17,7 +17,7 @@ function startUpdating(){
          }else{console.log("state = " + this.status)}
         }
     }
-    request.open("GET","Site?Page=room&update=true",true);
+    request.open("GET","Site?action=update",true);
     request.send();
     setTimeout(startUpdating, 5000);
 }
