@@ -16,10 +16,14 @@
  		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
   		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-      
       </head>
     
-    <body>
+    <body >
+    	<!-- form to log out -->
+		<form method="Post" id="log_out">
+			<input type="hidden" name="action" value="logout"></input>
+		</form>	
+    
     	<ul class="nav nav-tabs">
 		  <li id="hometab" class="active"><a data-toggle="tab" href="#home">Home</a></li>
 		  <li><a data-toggle="tab" href="#rules">Game rules</a></li>
@@ -33,6 +37,8 @@
 		  <xsl:if test="/Page/loggedIn">
 		  	<li id="roomtab"><a data-toggle="tab" href="#room">room</a></li>
 		  	<li id="gametab"><a data-toggle="tab" href="#game">Game</a></li>
+		  	<li><button class="btn btn-link" data-toggle="modal" type="submit" form="log_out" value="Submit">log out</button></li>				  	
+		  	
 		  </xsl:if>
 		  
 		</ul>
@@ -50,6 +56,9 @@
 				<xsl:if test="/Page/loggedIn">
 					<xsl:apply-templates select="room" />
 				  	<xsl:call-template name="game" />
+				  	
+				  	
+				  	
 				</xsl:if>
 				
 			</div>	
@@ -59,8 +68,8 @@
 			<script>
 				document.getElementById("hometab").className = "";
 				document.getElementById("home").className = "tab-pane fade";
-				<!-- document.getElementById("gametab").className = "";-->
-				<!-- document.getElementById("game").className = "tab-pane fade";  -->
+				document.getElementById("gametab").className = "";
+				document.getElementById("game").className = "tab-pane fade";
 				document.getElementById("roomtab").className = "active";
 				document.getElementById("room").className = "tab-pane fade in active";
 			</script>
@@ -70,8 +79,8 @@
 			<script>
 				document.getElementById("hometab").className = "";
 				document.getElementById("home").className = "tab-pane fade";
-				<!--document.getElementById("gametab").className = "active";-->
-				<!--document.getElementById("game").className = "tab-pane fade in active";-->
+				document.getElementById("gametab").className = "active";
+				document.getElementById("game").className = "tab-pane fade in active";
 				document.getElementById("roomtab").className = "";
 				document.getElementById("room").className = "tab-pane fade";
 			</script>
@@ -133,16 +142,7 @@
 		<!-- form to create a new game -->
 		<form method="Post" id="new_game">
 	  		<input type="hidden" name="action" value="newGame"></input>
-	  	</form>
-		
-	  	<!-- form to log out -->
-	  	<form method="Post" id="log_out">
-	  		<input type="hidden" name="Page" value="login"></input>
-	  		<input type="hidden" name="action" value="logout"></input>
-	  	</form>	
-	  	<button type="submit" form="log_out" value="Submit">log out</button>
-	  	
-		
+	  	</form>		
 		
 		<xsl:if test="not(/Page/room/curr-game)">
 			<div style="border:1px solid black;">
@@ -212,8 +212,8 @@
 
 <xsl:template name="game">
 	<div id="game" class="tab-pane fade">
-	    <h3>HOME</h3>
-	    <div class="bgimg">
+	    <div id="gameContainer" class="bgimg">
+	    	<div id="south-player"></div>
 	    </div>
 	</div>
 </xsl:template>

@@ -1,10 +1,15 @@
 @CHARSET "UTF-8";
 
 .bgimg {
-		    background-image: url('http://i.stack.imgur.com/q02th.jpg');
-		    position: absolute;
-       		top: 40px; /* Header Height */
-       		left:0px;
-       		width: 100vw;
-       		height: 100vh;
-		}
+	background-image: url('img/gameBackground.png');
+	position: fixed;
+    top: 40px; /* Header Height */
+    left:0px;
+       		
+    min-height: 100%;
+  	min-width: 1024px;
+  	/* Set up proportionate scaling */
+  	width: 100%;
+  	height: auto;
+}
+

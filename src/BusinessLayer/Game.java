@@ -2,11 +2,15 @@ package BusinessLayer;
 
 import java.util.UUID;
 
+import CardGame.HumanPlayer;
+import KleurenWiezen.KleureWiezenFactory;
+
 public class Game {
 
 	private User[] players;
 	private UUID id;
 	private boolean started = false;
+	private CardGame.Game game;
 
 
 
@@ -15,8 +19,33 @@ public class Game {
 		id = UUID.randomUUID();
 	}
 	
+	public synchronized boolean start(){
+		//do we have 4 players
+		for(int j =0;j<4;j++){
+			if(players[j] == null){
+				return false;
+			}
+		}
+		KleureWiezenFactory kf = KleureWiezenFactory.getInstance();
+		//make a new game
+		game = kf.getGame();
+		//add the players
+		for(int j =0;j<4;j++){
+			if(players[j].isAIUser()){
+				game.addPlayer(kf.getAIPlayer(), j);
+			}else{
+				HumanPlayer player = kf.getHumanPlayer();
+				game.addPlayer(player, j);
+				players[j].setPlayer(player);
+			}
+		}
+		//start the game
+		new Thread(game).start();
+		started = true;
+		return true;
+	}
 	
-	public boolean addPlayer(User user) {
+	public synchronized boolean addPlayer(User user) {
 		for(int i = 0;i<4;i++){
 			if(players[i] == null){
 				players[i]= user;
@@ -51,7 +80,7 @@ public class Game {
 		return false;
 	}
 	
-	public void removeAIUser(){
+	public synchronized void removeAIUser(){
 		for(int j =0;j<4;j++){
 			if(players[j] != null && players[j].isAIUser()){
 				players[j]=null;

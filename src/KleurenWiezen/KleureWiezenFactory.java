@@ -1,7 +1,5 @@
 package KleurenWiezen;
 
-import CardGame.Player;
-
 public class KleureWiezenFactory {
 
 	private static KleureWiezenFactory pf = new KleureWiezenFactory();
@@ -12,7 +10,7 @@ public class KleureWiezenFactory {
 	
 	private KleureWiezenFactory(){};
 	
-	public KHumanPlayer getKHumanPlayer(){
+	public KHumanPlayer getHumanPlayer(){
 		return new KHumanPlayer();
 	}
 	
@@ -20,7 +18,7 @@ public class KleureWiezenFactory {
 		return new AIPlayer();
 	}
 
-	public Game getGame(){
-		return new Game();
+	public KleurewiezenGame getGame(){
+		return new KleurewiezenGame();
 	}
 }

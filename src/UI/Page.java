@@ -8,11 +8,12 @@ import javax.servlet.http.HttpServletResponse;
 import BusinessLayer.AppFacade;
 import BusinessLayer.Game;
 import BusinessLayer.User;
+import CardGame.Player;
 
 
 public class Page {
 	protected AppFacade facade;
-	private String activTab = "roomActive";
+	private String activTab = "roomActive";	
 	
 	public Page(AppFacade facade){
 		this.facade = facade;
@@ -29,13 +30,21 @@ public class Page {
 			return getUpdateXML(user, game);
 		}else{ 
 			//logged in page
-			return makePage("<loggedIn></loggedIn>"
-							+"<"+activTab+"></"+activTab+">"
-							+ getRoomXML(user, game));
-			// game xml must still be added
+			activTab = "gameActive";
+			return makePage(
+					 // this makes it such that the logged in version will be returned as a response
+					 "<loggedIn></loggedIn>"
+					 //used to see what tab should be active
+					+"<"+activTab+"></"+activTab+">"
+					 // this xml will be transformed to the layout of the room tab
+					+getRoomXML(user, game)
+					 // this xml will be transformed into the layout for the game tab
+					//+getGameXML(user, game)
+					+"<game>"+"<bgimg>"+ "/context/gameBackground.png" +"</bgimg>"+"</game>"
+					);
 		}
 	}
-	
+
 	public String doPost(HttpServletRequest request,HttpServletResponse response){
 		String action = (String) request.getParameter("action");
 		
@@ -177,9 +186,8 @@ public class Page {
 		return doGet(request, response);
 	}
 
-	protected String makePage(String input) {
-		String output = new String();
-		output += "<Page>";
+	private String makePage(String input) {
+		String output = "<Page>";
 		output += input;
 		output += "</Page>";
 		return output;
@@ -211,6 +219,40 @@ public class Page {
 		XML += facade.getUsersXml();
 		XML += facade.getGamesXml();
 		XML += "</update>";	
+		return XML;
+	}
+	
+	private String getGameXML(User user, Game game) {
+		Player player = user.getPlayer();
+		int seat = player.getSeat();
+		String XML = "";
+		if(game==null || !game.started())return XML;
+		XML += "<Game>";
+		//this player (player to the south)
+		XML += "<south-player>";
+		XML += "<#cards>" + player.getAmountOfCards() + "</#cards>";
+			XML += "<hand>";
+			for(int i = 0;i<player.getHand().size();i++){
+				XML += "<card>"; 
+					XML += player.getHand().getCard(i).getID();
+					XML += "<card>";
+			}
+			XML += "</hand>";					
+		XML += "</south-player>";
+		//next player (player to the west)
+		XML += "<west-player>";
+			XML += "<#cards>" + player.getAmountOfCards(seat+1%4) + "</#cards>";		
+		XML += "</west-player>";
+		//next player (player to the north)
+		XML += "<north-player>";
+			XML += "<#cards>" + player.getAmountOfCards(seat+2%4) + "</#cards>";		
+		XML += "</north-player>";
+		//next player (player to the east)
+		XML += "<east-player>";
+			XML += "<#cards>" + player.getAmountOfCards(seat+3%4) + "</#cards>";		
+		XML += "</east-player>";
+
+		XML += "</Game>";
 		return XML;
 	}
 }
